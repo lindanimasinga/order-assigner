@@ -5,13 +5,18 @@ import { MongoClient } from "mongodb";
 export class OrderAssignerService {
 
     static dbName = "izinga-prod"
-    static url = "mongodb+srv://onusmongouser:wfsuser@cluster0-7odiz.mongodb.net/izinga-prod?retryWrites=true&w=majority"
-    
+    static username = "onusmongouser"
+    static password = "wfsuser"
+
+    static get url(): string {
+        return `mongodb+srv://${this.username}:${this.password}@cluster0-7odiz.mongodb.net/${OrderAssignerService.dbName}?retryWrites=true&w=majority`
+    }  
 
     static async assignDriver(mobileNumer: string, orderId: string) {
+        console.log(`url is ${this.url}`)
         var mongoClient =  await MongoClient.connect(this.url);
         const database = mongoClient.db(this.dbName);
-
+        console.log(`connected to mongo db ${database.namespace}`)
         //find driver exist
         var driver = await this.findDriver(mobileNumer, mongoClient)
         if(driver?.name == null || driver?.role != "MESSENGER") {
